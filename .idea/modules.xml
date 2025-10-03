@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/MaIR.iml" filepath="$PROJECT_DIR$/.idea/MaIR.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../SOTA/.idea/SeD-main.iml" filepath="$PROJECT_DIR$/../SOTA/.idea/SeD-main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../SwinWIR/.idea/SwinWIR.iml" filepath="$PROJECT_DIR$/../SwinWIR/.idea/SwinWIR.iml" />
+    </modules>
+  </component>
+</project>
