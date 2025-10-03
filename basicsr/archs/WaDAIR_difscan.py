@@ -12,7 +12,7 @@ import time
 import sys
 from archs.dwt_utils import idwt2d, dwt2d
 
-sys.path.append('/xlearning/boyun/codes/MaIR')
+
 try:
     from basicsr.archs.shift_scanf_util_wtt import mair_row_ids_generate, mair_column_ids_generate, \
         mair_diagonal_ids_generate, mair_ids_scan, mair_ids_inverse

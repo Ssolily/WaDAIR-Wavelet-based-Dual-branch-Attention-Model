@@ -1,7 +1,4 @@
-# Code Implementation of the MaIR Model
-"""
-2025.5.24:对out_norm和out_wtt的融合进行修改,直接学习norm和wtt的残差权重
-"""
+# Code Implementation of the WaDAIR Model
 import math
 import torch
 import torch.nn as nn
@@ -14,9 +11,9 @@ from mamba_ssm.ops.selective_scan_interface import selective_scan_fn, selective_
 from einops import rearrange, repeat
 import time
 import sys
-from basicsr.archs.WaDAIR_difscan import MaIR_difscan
+from archs.WaDAIR_difscan import WaDAIR_difscan
 
-sys.path.append('/xlearning/boyun/codes/MaIR')
+
 try:
     from basicsr.archs.shift_scanf_util import mair_ids_generate, mair_ids_scan, mair_ids_inverse, \
         mair_shift_ids_generate
@@ -499,9 +496,9 @@ class BasicLayer(nn.Module):
 
 
 @ARCH_REGISTRY.register()
-class MaIR(nn.Module):
-    r""" Mamba-based Image Restoration Network (MaIR)
-           A PyTorch implementation of : `MaIR: A Locality- and Continuity-Preserving Mamba for Image Restoration`.
+class WaDAIR(nn.Module):
+    r""" Wavelet-based Dual-branch Attention Model (WaDAIR)
+           A PyTorch implementation of : `Wavelet-based Dual-branch Attention Model for Image Super Resolution with Application to Enhancing Low-Quality Marine Microalgae Imagery`.
 
        Args:
            img_size (int | tuple(int)): Input image size. Default 64
@@ -546,7 +543,7 @@ class MaIR(nn.Module):
                  mlp_ratio=2,
                  **kwargs):
 
-        super(MaIR, self).__init__()
+        super(WaDAIR, self).__init__()
         num_in_ch = in_chans
         num_out_ch = in_chans
         num_feat = 64
@@ -559,7 +556,7 @@ class MaIR(nn.Module):
         self.upscale = upscale
         self.upsampler = upsampler
         self.ssm_ratio = ssm_ratio
-        self.MaIR_difscan = MaIR_difscan(img_size=img_size, patch_size=patch_size, in_chans=in_chans,
+        self.WaDAIR_difscan = WaDAIR_difscan(img_size=img_size, patch_size=patch_size, in_chans=in_chans,
                                          embed_dim=embed_dim, depths=depths, drop_rate=drop_rate, d_state=d_state,
                                          ssm_ratio=ssm_ratio, drop_path_rate=drop_path_rate, norm_layer=norm_layer,
                                          patch_norm=patch_norm, use_checkpoint=use_checkpoint, upscale=upscale,
@@ -732,7 +729,7 @@ class MaIR(nn.Module):
             # for classical SR
             x = self.conv_first(x)
             out_norm = self.conv_after_body(self.forward_features(x)) + x
-            out_wtt_feat = self.MaIR_difscan.forward_features(x)
+            out_wtt_feat = self.WaDAIR_difscan.forward_features(x)
             # 自动裁剪
             min_h = min(out_wtt_feat.shape[2], x.shape[2])
             min_w = min(out_wtt_feat.shape[3], x.shape[3])
@@ -747,7 +744,7 @@ class MaIR(nn.Module):
             # for lightweight SR
             x = self.conv_first(x)
             out_norm = self.conv_after_body(self.forward_features(x)) + x
-            out_wtt_feat = self.MaIR_difscan.forward_features(x)
+            out_wtt_feat = self.WaDAIR_difscan.forward_features(x)
             min_h = min(out_wtt_feat.shape[2], out_norm.shape[2])
             min_w = min(out_wtt_feat.shape[3], out_norm.shape[3])
             out_wtt_feat = out_wtt_feat[:, :, :min_h, :min_w]
@@ -1036,7 +1033,7 @@ def get_parameter_number(model):
 if __name__ == '__main__':
     torch.cuda.set_device(0)
     # net = MaIR(img_size=(640, 360), embed_dim=60, d_state=1, ssm_ratio=1.1, dynamic_ids=False, mlp_ratio=1.6,upscale=2).cuda()
-    net = MaIR(img_size=(320, 180), embed_dim=60, d_state=1, ssm_ratio=1.1, dynamic_ids=False, mlp_ratio=1.6,
+    net = WaDAIR(img_size=(320, 180), embed_dim=60, d_state=1, ssm_ratio=1.1, dynamic_ids=False, mlp_ratio=1.6,
                upscale=4).cuda()
     # net = MaIR(img_size=(64, 64), embed_dim=60, d_state=16, ssm_ratio=1.5, dynamic_ids=False, mlp_ratio=1.4,upscale=2).cuda()
     # net = MaIR(img_size=(320, 180), depths=(6, 6, 6, 6, 6, 6), embed_dim=180, d_state=16, ssm_ratio=2.0, dynamic_ids=False,

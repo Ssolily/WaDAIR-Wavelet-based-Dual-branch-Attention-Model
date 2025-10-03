@@ -1,7 +1,4 @@
-# Code Implementation of the MaIR Model
-"""
-2025.5.24:对out_norm和out_wtt的融合进行修改,直接学习norm和wtt的残差权重
-"""
+# Code Implementation of the WaDAIR Model
 import math
 import torch
 import torch.nn as nn
@@ -16,7 +13,7 @@ import time
 import sys
 from archs.WaDAIR_difscan import WaDAIR_difscan
 
-sys.path.append('/xlearning/boyun/codes/MaIR')
+
 try:
     from basicsr.archs.shift_scanf_util import mair_ids_generate, mair_ids_scan, mair_ids_inverse, \
         mair_shift_ids_generate
